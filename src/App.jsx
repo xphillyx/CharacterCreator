@@ -25,13 +25,10 @@ import Landing from "./pages/Landing"
 import Appearance from "./pages/Appearance"
 import LanguageSwitch from "./components/LanguageSwitch"
 
+import ManifestJson from "./manifest.json"
+
 // dynamically import the manifest
-
-// Change assetImportPath to local manifest.json to preserve current behavior in case
-// the manifest.json changes in the future
-const assetImportPath = "./manifest.json"
-// const assetImportPath = import.meta.env.VITE_ASSET_PATH + "/manifest.json"
-
+const assetImportPath = import.meta.env.VITE_ASSET_PATH + "/manifest.json"
 const peresonalityImportPath =
   import.meta.env.VITE_ASSET_PATH + "/personality.json"
 
@@ -107,7 +104,12 @@ async function fetchAnimation(templateInfo) {
 }
 
 async function fetchAll() {
-  const initialManifest = await fetchManifest()
+
+  // Instead of fetching manifest dynamically, load it from local manifest file
+  // to preserve current functionality in case the manifest file changes in the future.
+  // const initialManifest = await fetchManifest()
+  const initialManifest = ManifestJson;
+
   const personality = await fetchPersonality()
   const sceneModel = await fetchScene()
 
