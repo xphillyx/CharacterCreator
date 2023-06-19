@@ -26,7 +26,12 @@ import Appearance from "./pages/Appearance"
 import LanguageSwitch from "./components/LanguageSwitch"
 
 // dynamically import the manifest
-const assetImportPath = import.meta.env.VITE_ASSET_PATH + "/manifest.json"
+
+// Change assetImportPath to local manifest.json to preserve current behavior in case
+// the manifest.json changes in the future
+const assetImportPath = "./manifest.json"
+// const assetImportPath = import.meta.env.VITE_ASSET_PATH + "/manifest.json"
+
 const peresonalityImportPath =
   import.meta.env.VITE_ASSET_PATH + "/personality.json"
 
