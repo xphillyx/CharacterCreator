@@ -1,5 +1,11 @@
-**Note:** This fork adds a feature where you can autogenerate an avatar based on your description
+**Demo:** https://character-creator-window.vercel.app/
+
+**Notes:**
+* This fork adds a feature where you can generate an avatar based on your description
 using an LLM via [Window AI](https://windowai.io/).
+* Currently, the LLM only understands color for eyes and head (which includes hair), because for the other traits
+(body, chest, feet, legs, and outer) the color is not in the metadata. There could
+be a way to automatically parse the color from the images in the [@webaverse-studios/character-assets](https://github.com/webaverse-studios/character-assets) repo.
 
 ---
 
