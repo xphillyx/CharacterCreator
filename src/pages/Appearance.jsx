@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import styles from "./Appearance.module.css"
 import { ViewMode, ViewContext } from "../context/ViewContext"
 import { SceneContext } from "../context/SceneContext"
@@ -44,6 +44,7 @@ function Appearance({
     setViewMode(ViewMode.BIO)
   }
 
+  const [avatarDescriptionInputValue, setAvatarDescriptionInputValue] = useState('');
 
   // TODO: hardcode fetched manifest json, because if they add more
   // traits in the future, it could break the functionality (e.g. need to make sure color mapping is there)
@@ -142,7 +143,7 @@ function Appearance({
 
     // prompt
 
-    let description = 'avatar with red eyes and red hair';
+    let description = avatarDescriptionInputValue;
 
     let prompt = `
       You are an avatar builder, where you can choose from a variety of traits to create an avatar for the user.
@@ -157,7 +158,7 @@ function Appearance({
       ---
 
       The user requests you to build an avatar with the following description:
-      ${description}
+      "${description}".
 
       Please do your best to fulfill the user's request using the trait database only, and return the result in the following JSON format:
 
@@ -356,6 +357,13 @@ function Appearance({
           size={14}
           className={styles.buttonRight}
           onClick={next}
+        />
+        <input 
+          type="text"
+          placeholder="Avatar description"
+          className={styles.description_input}
+          value={avatarDescriptionInputValue}
+          onChange={(e) => setAvatarDescriptionInputValue(e.target.value)}
         />
         <CustomButton
           theme="light"

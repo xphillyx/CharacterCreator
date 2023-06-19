@@ -28,3 +28,11 @@
 .buttonContainer button {
     min-width: 120px;
 }
+
+.description_input {
+    background-color: #193234;
+    border: 1px solid #C5DCD0;
+    box-sizing: border-box;
+    color: #fff;
+    padding: 8px;
+}
