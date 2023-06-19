@@ -364,6 +364,7 @@ function Appearance({
           className={styles.description_input}
           value={avatarDescriptionInputValue}
           onChange={(e) => setAvatarDescriptionInputValue(e.target.value)}
+          size="32"
         />
         <CustomButton
           theme="light"
