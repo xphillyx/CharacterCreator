@@ -8,6 +8,7 @@ import { LanguageContext } from "../context/LanguageContext"
 import { SoundContext } from "../context/SoundContext"
 import { AudioContext } from "../context/AudioContext"
 import { getWindowAI } from 'window.ai';
+import JSON5 from 'json5'
 
 import {
   getAllTemplateOptions
@@ -27,6 +28,7 @@ function Appearance({
     getRandomCharacter,
     isChangingWholeAvatar,
     setIsChangingWholeAvatar,
+    setSelectedOptions
   } = React.useContext(SceneContext)
 
   const { playSound } = React.useContext(SoundContext)
@@ -46,13 +48,6 @@ function Appearance({
   // TODO: hardcode fetched manifest json, because if they add more
   // traits in the future, it could break the functionality (e.g. need to make sure color mapping is there)
   const chatWithLLM = async () => {
-    /*
-    if (!isChangingWholeAvatar) {
-      !isMute && playSound('randomizeButton');
-      getRandomCharacter()
-    }
-    */
-
     const options = getAllTemplateOptions(templateInfo);
 
     const options2 = {};
@@ -147,18 +142,24 @@ function Appearance({
 
     // prompt
 
-    let description = 'avatar with blue eyes and blue hair';
+    let description = 'avatar with red eyes and red hair';
 
     let prompt = `
       You are an avatar builder, where you can choose from a variety of traits to create an avatar for the user.
       There are seven traits: body, eyes, head, chest, feet, legs, and outer.
 
+      Here is the trait database you must use:
+
+      ---
+
       ${text}
+
+      ---
 
       The user requests you to build an avatar with the following description:
       ${description}
 
-      Please do your best to fulfill the user's request, and return the result in the following JSON format:
+      Please do your best to fulfill the user's request using the trait database only, and return the result in the following JSON format:
 
       {
         "body": {
@@ -225,6 +226,74 @@ function Appearance({
     );
 
     console.log('generateText response', response);
+
+    // parse response
+
+    let content = response[0].message.content;
+    content = content.trim();
+    // remove leading and trailing quotes
+    if (content.startsWith('"')) {
+      content = content.substring(1);
+    }
+    if (content.endsWith('"')) {
+      content = content.substring(0, content.length - 1);
+    }
+
+    // use JSON5 to handle trailing commas returned by LLM
+    const result = JSON5.parse(content);
+
+    console.log('result', result);
+
+    // convert response to avatar
+
+    const matchedTemplateOptions = [];
+
+    for (const traitName in result) {
+      const trait = result[traitName];
+
+      const itemName = trait["item name"];
+      const textureTraitName = trait["texture trait"];
+      const colorTraitName = trait["color trait"];
+
+      if (textureTraitName && colorTraitName) {
+        throw "Unexpected to have both texture trait and color trait";
+      }
+
+      // search for trait
+      let matchedOption = null;
+      for (var i = 0; i < options[traitName].length; i++) {
+        const option = options[traitName][i];
+        let isMatch = false;
+        if (option.item.name == itemName) {
+          if (textureTraitName) {
+            if (option.textureTrait.name == textureTraitName) {
+              isMatch = true;
+            }
+          }
+          if (colorTraitName) {
+            if (option.colorTrait.name == colorTraitName) {
+              isMatch = true;
+            }
+          }
+        }
+        if (isMatch) {
+          matchedOption = option;
+          break;
+        }
+      }
+
+      if (!matchedOption) {
+        console.error('no matching option for trait', trait);
+        throw "Unexpected to not find a matching option";
+      }
+
+      matchedTemplateOptions.push(matchedOption);
+    }
+
+    console.log('matchedTemplateOptions', matchedTemplateOptions);
+
+    // set React state with new template options
+    setSelectedOptions(matchedTemplateOptions);
   }
 
   const randomize = () => {
