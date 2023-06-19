@@ -7,6 +7,7 @@ import CustomButton from "../components/custom-button"
 import { LanguageContext } from "../context/LanguageContext"
 import { SoundContext } from "../context/SoundContext"
 import { AudioContext } from "../context/AudioContext"
+import { getWindowAI } from 'window.ai';
 
 import {
   getAllTemplateOptions
@@ -44,7 +45,7 @@ function Appearance({
 
   // TODO: hardcode fetched manifest json, because if they add more
   // traits in the future, it could break the functionality (e.g. need to make sure color mapping is there)
-  const chatWithLLM = () => {
+  const chatWithLLM = async () => {
     /*
     if (!isChangingWholeAvatar) {
       !isMute && playSound('randomizeButton');
@@ -128,7 +129,7 @@ function Appearance({
       for (const trait in traits) {
         const data = traits[trait];
 
-        text += `- ${trait} with `;
+        text += `- ${trait}, with `;
 
         if (data["texture trait names"] && data["texture trait names"].length > 0) {
           text += `the following texture traits: ${data["texture trait names"].join(", ")}\n`;
@@ -144,6 +145,86 @@ function Appearance({
 
     console.log("LLM readable text", text);
 
+    // prompt
+
+    let description = 'avatar with blue eyes and blue hair';
+
+    let prompt = `
+      You are an avatar builder, where you can choose from a variety of traits to create an avatar for the user.
+      There are seven traits: body, eyes, head, chest, feet, legs, and outer.
+
+      ${text}
+
+      The user requests you to build an avatar with the following description:
+      ${description}
+
+      Please do your best to fulfill the user's request, and return the result in the following JSON format:
+
+      {
+        "body": {
+          "item name": "<item name>",
+          "texture trait": "<texture trait name>",
+        },
+        "eyes": {
+          "item name": "<item name>",
+          "texture trait": "<texture trait name>",
+        },
+        "head": {
+          "item name": "<item name>",
+          "color trait": "<color trait name>",
+        },
+        "chest": {
+          "item name": "<item name>",
+          "texture trait": "<texture trait name>",
+        },
+        "feet": {
+          "item name": "<item name>",
+          "texture trait": "<texture trait name>",
+        },
+        "legs": {
+          "item name": "<item name>",
+          "texture trait": "<texture trait name>",
+        },
+        "outer": {
+          "item name": "<item name>",
+          "texture trait": "<texture trait name>",
+        }
+      }
+    `;
+
+    console.log('prompt', prompt);
+
+    // call Window AI
+
+    let ai;
+    try {
+      ai = await getWindowAI()
+    } catch (error) {
+      alert('window.ai not found. Please install at https://windowai.io/');
+      return;
+    }
+
+    const messages = [
+      {
+        role: "system",
+        content: prompt
+      }];
+
+    const response = await ai.generateText(
+      {
+        messages: messages
+      },
+      {
+        temperature: 0.7,
+        maxTokens: 200,
+        // Handle partial results if they can be streamed in
+        onStreamResult: (res) => {
+          console.log(res.message.content)
+        }
+      }
+    );
+
+    console.log('generateText response', response);
   }
 
   const randomize = () => {
