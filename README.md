@@ -1,3 +1,8 @@
+**Note:** This fork adds a feature where you can autogenerate an avatar based on your description
+using an LLM via [Window AI](https://windowai.io/).
+
+---
+
 # Webaverse Character Studio
 An open, collaborative and evolving 3D avatar studio for the open metaverse.
 
