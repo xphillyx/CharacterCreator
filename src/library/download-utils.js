@@ -104,6 +104,10 @@ export async function downloadVRM(avatarToDownload, avatar, fileName = "", atlas
   const downloadFileName = `${
     fileName && fileName !== "" ? fileName : "AvatarCreatorModel"
   }`
+  console.log('avatarToDownload',avatarToDownload);
+  console.log('avatar',avatar);
+  console.log('fileName',fileName);
+  
   getVRMData(avatarToDownload, avatar, atlasSize, isVrm0).then((vrm)=>{
     saveArrayBuffer(vrm, `${downloadFileName}.vrm`)
   })

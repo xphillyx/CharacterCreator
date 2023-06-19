@@ -5,14 +5,45 @@ export function getRandomizedTemplateOptions(template) {
   return getMultipleRandomTraits(getInitialTraits(template),template);
 }
 
+export function getAllTemplateOptions(template) {
+  return getAllTraits(getInitialTraits(template),template);
+}
+
 export function getInitialTraits(template){
 
-  return[
+
+  const traits = [
     ...new Set([
       ...getAsArray(template.requiredTraits),
       ...getAsArray(template.randomTraits),
     ]),
   ]
+
+  console.log('initialTraits',traits);
+
+  return traits;
+}
+
+export function getAllTraits(traitNames, template) {
+  const resultTraitOptions = {};
+
+  traitNames.map((traitName) => {
+    const traitFound = template.traits.find(
+      (trait) => trait.trait === traitName,
+    )
+    if (traitFound) {
+      const options = getTraitOptions(traitFound, template)
+
+      console.log('traitName',traitName)
+      console.log('options',options);
+
+      resultTraitOptions[traitName] = options;
+    }
+  });
+
+  console.log('resultTraitOptions',resultTraitOptions)
+  
+  return resultTraitOptions
 }
 
 export function getMultipleRandomTraits(traitNames, template) {
@@ -24,12 +55,19 @@ export function getMultipleRandomTraits(traitNames, template) {
     )
     if (traitFound) {
       const options = getTraitOptions(traitFound, template)
+
+      console.log('traitName',traitName)
+      console.log('options',options);
+
       if (options?.length > 0)
         resultTraitOptions.push(
           options[Math.floor(Math.random() * options.length)],
         )
     }
   })
+
+  console.log('resultTraitOptions',resultTraitOptions)
+  
   return resultTraitOptions
 }
 export const getOptionsFromAvatarData = (avatarData, manifest) =>{
