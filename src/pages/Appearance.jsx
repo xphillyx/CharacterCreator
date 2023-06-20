@@ -222,7 +222,7 @@ function Appearance({
         messages: messages
       },
       {
-        temperature: 0.7,
+        temperature: 0.0, // setting value 0 in attempt to prevent LLM from hallucinating invalid trait options
         maxTokens: 200,
         // Handle partial results if they can be streamed in
         onStreamResult: (res) => {
