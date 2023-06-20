@@ -195,6 +195,8 @@ function Appearance({
           "texture trait": "<texture trait name>",
         }
       }
+
+      Again, ONLY respond with the JSON; there should be no text before or after the JSON. 
     `;
 
     console.log('prompt', prompt);
@@ -242,6 +244,20 @@ function Appearance({
     if (content.endsWith('"')) {
       content = content.substring(0, content.length - 1);
     }
+
+    // remove text before and after the JSON
+    // remove text before the first "{"
+    const firstOpenBraceIndex = content.indexOf("{");
+    if (firstOpenBraceIndex == -1) {
+      throw "Unexpected to not find first open brace";
+    }
+    content = content.substring(firstOpenBraceIndex);
+    // remove text after the last "}"
+    const lastCloseBraceIndex = content.lastIndexOf("}");
+    if (lastCloseBraceIndex == -1) {
+      throw "Unexpected to not find last close brace";
+    }
+    content = content.substring(0, lastCloseBraceIndex + 1);
 
     // use JSON5 to handle trailing commas returned by LLM
     const result = JSON5.parse(content);
