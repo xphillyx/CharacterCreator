@@ -10,8 +10,6 @@ export function getAllTemplateOptions(template) {
 }
 
 export function getInitialTraits(template){
-
-
   const traits = [
     ...new Set([
       ...getAsArray(template.requiredTraits),

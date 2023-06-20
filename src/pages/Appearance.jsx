@@ -157,6 +157,9 @@ function Appearance({
 
       ---
 
+      Note that for the traits head, outer, chest, legs, and feet, you have the option to
+      choose the item name as an empty string '' to indicate no option selected for that trait.
+
       The user requests you to build an avatar with the following description:
       "${description}".
 
@@ -262,9 +265,11 @@ function Appearance({
 
       // search for trait
       let matchedOption = null;
+      let oneTrait = null;
       for (var i = 0; i < options[traitName].length; i++) {
         const option = options[traitName][i];
         let isMatch = false;
+        oneTrait = option.trait;
         if (option.item.name == itemName) {
           if (textureTraitName) {
             if (option.textureTrait.name == textureTraitName) {
@@ -280,6 +285,17 @@ function Appearance({
         if (isMatch) {
           matchedOption = option;
           break;
+        }
+      }
+
+      // option for empty trait value
+      if (['head', 'outer', 'chest', 'legs', 'feet'].includes(traitName)) {
+        if (itemName == '') {
+          matchedTemplateOptions.push({
+            item: null,
+            trait: oneTrait,
+          })
+          continue;
         }
       }
 

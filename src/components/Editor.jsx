@@ -45,6 +45,8 @@ export default function Editor({animationManager, blinkManager, lookatManager, e
 
 
   const selectOption = (option) => {
+    console.log('selectOption', option);
+    
     !isMute && playSound('optionClick');
     if (option.name === currentTraitName) {
       if (cameraFocused) {

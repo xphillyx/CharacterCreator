@@ -60,6 +60,9 @@ export const SceneProvider = (props) => {
 
   const loadAvatar = (avatarData) =>{
     const data = getOptionsFromAvatarData(avatarData,manifest)
+
+    console.log("loadAvatar", data);
+    
     if (data != null){
       resetAvatar();
       setSelectedOptions(data);
